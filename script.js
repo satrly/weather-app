@@ -3,12 +3,7 @@ const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast';
 
 let welcomeScreenEl, appContainerEl, useGeoBtnEl, manualCityFormEl, cityInputEl, suggestionsListEl, weatherCenterEl, cityNameEl, tempCEl, tempFEl, currentDescEl, timeDateEl, forecastGridEl, changeCityBtnEl, errorMessageEl, loadingEl, mouseTrailEl;
 
-// Города для автодополнения
-const CITIES_LIST = [
-    "Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan",
-    "Nizhny Novgorod", "Chelyabinsk", "Samara", "Omsk", "Rostov-on-Don",
-    "Ufa", "Krasnoyarsk", "Voronezh", "Perm", "Volgograd"
-];
+
 
 let currentWeatherData = null;
 
@@ -110,7 +105,7 @@ async function handleGeolocationClick() {
 }
 
 async function getLocationName(lat, lon) {
-    const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ru`;
+    const url = `https://nominatim.openstreetmap.org/reverse?lat=  ${lat}&lon=${lon}&format=json&accept-language=ru`;
     const response = await fetch(url);
     if (!response.ok) throw new Error("Не удалось получить название места");
     const data = await response.json();
