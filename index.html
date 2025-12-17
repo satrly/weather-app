@@ -1,34 +1,59 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Weather app</title>
-    <link rel="stylesheet" href="styles.css" />
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
+    <title>Weather-app</title>
+    <link rel="stylesheet" href="style.css">
+   
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <img src="" alt="" srcset="" id="weather-icon">
-        <div id="location">Unable to Fetch Weather</div>
-        <div class="desc">No Information Available.</div>
-        <div class="weather">
-            <div class="c">Error</div>
-            <div class="circle"></div>
-            <div class="f">Error</div>
-        </div>
-        <div class="info">
-            <h4>Sunrise: <span class="sunrise">No Information Available</span></h4>
-            <h4>Sunset: <span class="sunset">No Information Available</span></h4>
-        </div>
-
+   
+    <div id="welcome-screen" class="welcome-screen">
+        <h1> Погода</h1>
+        <p>Разрешите доступ к местоположению или введите город вручную (можно с ошибками)</p>
+        <button id="use-geo-btn">Выследите меня по IP</button>
+        <form id="manual-city-form">
+            <input type="text" id="city-input" placeholder="Где вы живёте, Сударь?" autocomplete="off" required>
+            <ul id="suggestions-list" class="suggestions hidden"></ul>
+            <button type="submit">Поиск моего города</button>
+        </form>
     </div>
-    <script src="scripts.js"></script>
+
+   
+    <div id="app-container" class="app-container hidden">
+        <div id="mouse-trail"></div>
+
+       
+        <div id="weather-center" class="weather-center">
+            <h2 id="city-name">Город</h2>
+            <div class="temp-display">
+                <span id="temp-c">--°C</span>
+                <span id="temp-f">--°F</span>
+            </div>
+            <div class="current-weather" id="current-desc">Загрузка...</div>
+            <div class="time-date" id="time-date">Загрузка времени...</div>
+
+            
+            <div id="forecast-grid" class="forecast-grid">
+              
+            </div>
+
+            
+            <button id="change-city-btn" class="change-city-btn"> Сменить город</button>
+        </div>
+    </div>
+
+    
+    <div id="error-message" class="error-message hidden">
+        <p>Ошибка: невозможно получить данные.</p>
+    </div>
+    <div id="loading" class="loading hidden">Загрузка...</div>
+
+    <script src="script.js"></script>
 </body>
 
 </html>
