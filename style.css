@@ -36,8 +36,8 @@ body {
 }
 
 .welcome-screen h1 {
-    font-family: 'Lora', serif;
-    font-size: 2.5rem;
+    font-family: 'Delius', cursive; 
+    font-size: 2.5rem; 
     color: #333;
     margin-bottom: 10px;
 }
@@ -103,9 +103,6 @@ body {
 
 
 
-
-
-
 #manual-city-form button {
     background: #f37379;
     color: white;
@@ -143,6 +140,7 @@ body {
 }
 
 
+
 .weather-center {
     background: radial-gradient(circle at center, rgba(255, 255, 255, 0.95), transparent 70%);
     backdrop-filter: blur(10px);
@@ -169,7 +167,7 @@ body {
 }
 
 .weather-center h2 {
-    font-family: 'Lora', serif;
+    font-family: 'Delius', cursive; 
     font-size: 2.2rem;
     color: #333;
     margin-bottom: 10px;
@@ -220,27 +218,24 @@ body {
     background: rgba(255, 255, 255, 0.7);
     border-radius: 8px;
     padding: 10px;
-    
     transition: transform 0.3s;
     font-size: 0.9rem;
     text-align: center;
-    font-family: 'Roboto', sans-serif;
-}
-
-.day-card:hover {
-    transform: translateY(-3px);
+    color: #333; 
+    font-family: 'Roboto', sans-serif; 
 }
 
 .day-card .day-short {
     font-weight: bold;
     font-size: 0.9rem;
     margin-bottom: 5px;
-    font-family: 'Lora', serif;
+    color: #333; 
+    font-family: 'Roboto', serif; 
 }
 
 .day-card .desc {
     font-size: 0.8rem;
-    color: #666;
+    color: #333; 
     margin: 5px 0;
     font-family: 'Roboto', sans-serif;
 }
@@ -248,7 +243,7 @@ body {
 .day-card .temp-range {
     font-size: 0.9rem;
     font-weight: bold;
-    color: #333;
+    color: #333; 
     font-family: 'Roboto', sans-serif;
 }
 
