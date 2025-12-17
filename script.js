@@ -138,7 +138,7 @@ function handleManualSubmit(e) {
 }
 
 function handleChangeCityClick() {
-    document.body.style.color = '#333'; // ← Сбрасываем цвет текста
+    document.body.style.color = '#333'; 
     welcomeScreenEl.classList.remove('hidden');
     appContainerEl.classList.add('hidden');
     cityInputEl.value = '';
@@ -146,7 +146,7 @@ function handleChangeCityClick() {
 }
 
 function handleAddCityClick() {
-    document.body.style.color = '#333'; // ← Сбрасываем цвет текста
+    document.body.style.color = '#333'; 
     welcomeScreenEl.classList.remove('hidden');
     appContainerEl.classList.add('hidden');
     cityInputEl.value = '';
@@ -209,7 +209,7 @@ function handleRefresh() {
 function handleToggleView() {
     isViewToggled = !isViewToggled;
     localStorage.setItem('isViewToggled', JSON.stringify(isViewToggled));
-    toggleViewBtnEl.textContent = isViewToggled ? '🎨 Вернуть вид' : '🎨 Сменить вид';
+    toggleViewBtnEl.textContent = isViewToggled ? ' Вернуть вид' : ' Сменить вид';
     applyViewToggle();
 }
 
