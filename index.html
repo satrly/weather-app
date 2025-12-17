@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <!-- Приветственный экран -->
+    
     <div id="welcome-screen" class="welcome-screen">
         <h1> Погода</h1>
         <p>Разрешите доступ к местоположению или введите город вручную</p>
@@ -26,20 +26,23 @@
         </form>
     </div>
 
-    <!-- Основной интерфейс -->
+   
     <div id="app-container" class="app-container hidden">
         <div id="mouse-trail"></div>
 
-        <!-- Список городов -->
+   
         <div id="cities-list" class="cities-list">
             <button class="city-btn active" data-city="current">Текущее местоположение</button>
-            <!-- Добавленные города будут здесь -->
+           
         </div>
 
-        <!-- Кнопка обновить -->
-        <button id="refresh-btn" class="refresh-btn">🔄 Обновить</button>
+       
+        <div class="top-buttons">
+            <button id="refresh-btn" class="refresh-btn"> Обновить</button>
+            <button id="toggle-view-btn" class="toggle-view-btn"> Сменить вид</button>
+        </div>
 
-        <!-- Центральный прогноз -->
+        
         <div id="weather-center" class="weather-center">
             <h2 id="city-name">Город</h2>
             <div class="temp-display">
@@ -50,14 +53,22 @@
             <div class="time-date" id="time-date">Загрузка времени...</div>
 
             <div id="forecast-grid" class="forecast-grid">
-                <!-- Прогноз -->
+             
             </div>
 
-            <button id="change-city-btn" class="change-city-btn"> Сменить город</button>
+            
+            <div class="bottom-buttons">
+                <button id="add-city-btn" class="add-city-btn"> Добавить город</button>
+                <button id="change-city-btn" class="change-city-btn"> Сменить город</button>
+            </div>
+        </div>
+
+        <div id="all-weather-container" class="all-weather-container hidden">
+            
         </div>
     </div>
 
-    <!-- Сообщения -->
+   
     <div id="error-message" class="error-message hidden">
         <p>Ошибка: невозможно получить данные.</p>
     </div>

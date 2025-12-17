@@ -1,19 +1,20 @@
 const GEOCODING_URL = 'https://nominatim.openstreetmap.org/search';
 const WEATHER_URL = 'https://api.open-meteo.com/v1/forecast';
 
-// Города для автодополнения
+
 const CITIES_LIST = [
-    "Moscow", "Saint Petersburg", "Novosibirsk", "Yekaterinburg", "Kazan",
-    "Nizhny Novgorod", "Chelyabinsk", "Samara", "Omsk", "Rostov-on-Don",
-    "Ufa", "Krasnoyarsk", "Voronezh", "Perm", "Volgograd"
+    "Москва", "Санкт-Петербург", "Новосибирск", "Екатеринбург", "Казань",
+    "Нижний Новгород", "Челябинск", "Самара", "Омск", "Ростов-на-Дону",
+    "Уфа", "Красноярск", "Воронеж", "Пермь", "Волгоград"
 ];
 
 let currentWeatherData = null;
-let currentViewedCity = 'current'; // по умолчанию текущее местоположение
+let currentViewedCity = 'current';
 let userCities = JSON.parse(localStorage.getItem('userCities')) || [];
+let isViewToggled = JSON.parse(localStorage.getItem('isViewToggled')) || false;
 
-// Элементы DOM
-let welcomeScreenEl, appContainerEl, useGeoBtnEl, manualCityFormEl, cityInputEl, suggestionsListEl, errorMessageInputEl, citiesListEl, refreshBtnEl, weatherCenterEl, cityNameEl, tempCEl, tempFEl, currentDescEl, timeDateEl, forecastGridEl, changeCityBtnEl, errorMessageEl, loadingEl, mouseTrailEl;
+
+let welcomeScreenEl, appContainerEl, useGeoBtnEl, manualCityFormEl, cityInputEl, suggestionsListEl, errorMessageInputEl, citiesListEl, refreshBtnEl, toggleViewBtnEl, weatherCenterEl, cityNameEl, tempCEl, tempFEl, currentDescEl, timeDateEl, forecastGridEl, addCityBtnEl, changeCityBtnEl, allWeatherContainerEl, errorMessageEl, loadingEl, mouseTrailEl;
 
 document.addEventListener('DOMContentLoaded', () => {
     welcomeScreenEl = document.getElementById('welcome-screen');
@@ -25,6 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     errorMessageInputEl = document.getElementById('error-message-input');
     citiesListEl = document.getElementById('cities-list');
     refreshBtnEl = document.getElementById('refresh-btn');
+    toggleViewBtnEl = document.getElementById('toggle-view-btn');
     weatherCenterEl = document.getElementById('weather-center');
     cityNameEl = document.getElementById('city-name');
     tempCEl = document.getElementById('temp-c');
@@ -32,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
     currentDescEl = document.getElementById('current-desc');
     timeDateEl = document.getElementById('time-date');
     forecastGridEl = document.getElementById('forecast-grid');
+    addCityBtnEl = document.getElementById('add-city-btn');
     changeCityBtnEl = document.getElementById('change-city-btn');
+    allWeatherContainerEl = document.getElementById('all-weather-container');
     errorMessageEl = document.getElementById('error-message');
     loadingEl = document.getElementById('loading');
     mouseTrailEl = document.getElementById('mouse-trail');
@@ -44,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initEventListeners();
     loadSavedState();
+    applyViewToggle();
 });
 
 function initEventListeners() {
@@ -51,7 +56,9 @@ function initEventListeners() {
     manualCityFormEl?.addEventListener('submit', handleManualSubmit);
     useGeoBtnEl?.addEventListener('click', handleGeolocationClick);
     changeCityBtnEl?.addEventListener('click', handleChangeCityClick);
+    addCityBtnEl?.addEventListener('click', handleAddCityClick);
     refreshBtnEl?.addEventListener('click', handleRefresh);
+    toggleViewBtnEl?.addEventListener('click', handleToggleView);
     document.addEventListener('mousemove', createMouseTrail);
 }
 
@@ -66,6 +73,7 @@ function loadSavedState() {
 
 function handleAutocomplete(e) {
     const value = cityInputEl?.value?.trim().toLowerCase();
+    
     if (!suggestionsListEl || !value) {
         if (suggestionsListEl) suggestionsListEl.classList.add('hidden');
         return;
@@ -73,14 +81,17 @@ function handleAutocomplete(e) {
 
     suggestionsListEl.innerHTML = '';
 
-    const matches = CITIES_LIST.filter(city => city.toLowerCase().includes(value));
+    const matches = CITIES_LIST.filter(city => 
+        city.toLowerCase().includes(value)
+    );
 
     if (matches.length > 0) {
         matches.forEach(city => {
             const li = document.createElement('li');
             li.textContent = city;
-            li.addEventListener('click', () => {
-                cityInputEl.value = city;
+            li.addEventListener('click', (event) => {
+                event.preventDefault();
+                cityInputEl.value = city; 
                 suggestionsListEl.classList.add('hidden');
             });
             suggestionsListEl.appendChild(li);
@@ -100,24 +111,47 @@ function handleManualSubmit(e) {
         return;
     }
 
-    if (!CITIES_LIST.some(city => city.toLowerCase() === cityName.toLowerCase())) {
+    
+    const foundCity = CITIES_LIST.find(city => 
+        city.toLowerCase() === cityName.toLowerCase()
+    );
+
+    if (!foundCity) {
         showErrorInput("Введите корректный город");
         return;
     }
 
     hideErrorInput();
 
-    if (!userCities.some(c => c.name.toLowerCase() === cityName.toLowerCase())) {
-        userCities.push({ name: cityName });
-        if (userCities.length > 3) userCities.shift(); // Ограничиваем до 3
+   
+    const normalizedCityName = foundCity;
+
+    if (!userCities.some(c => c.name === normalizedCityName)) {
+        userCities.push({ name: normalizedCityName });
+        if (userCities.length > 3) userCities.shift();
         localStorage.setItem('userCities', JSON.stringify(userCities));
         renderCitiesList();
     }
 
-    loadWeatherForCity(cityName);
+    loadWeatherForCity(normalizedCityName);
     switchToApp();
 }
 
+function handleChangeCityClick() {
+    document.body.style.color = '#333'; // ← Сбрасываем цвет текста
+    welcomeScreenEl.classList.remove('hidden');
+    appContainerEl.classList.add('hidden');
+    cityInputEl.value = '';
+    suggestionsListEl.classList.add('hidden');
+}
+
+function handleAddCityClick() {
+    document.body.style.color = '#333'; // ← Сбрасываем цвет текста
+    welcomeScreenEl.classList.remove('hidden');
+    appContainerEl.classList.add('hidden');
+    cityInputEl.value = '';
+    suggestionsListEl.classList.add('hidden');
+} 
 function handleGeolocationClick() {
     try {
         showLoading();
@@ -130,7 +164,6 @@ function handleGeolocationClick() {
                     hideLoading();
                     return;
                 }
-                // Сохраняем координаты для текущего местоположения
                 localStorage.setItem('currentLocation', JSON.stringify({ lat: pos.lat, lon: pos.lon }));
                 loadWeatherForCity('current');
                 switchToApp();
@@ -160,9 +193,42 @@ function handleChangeCityClick() {
     suggestionsListEl.classList.add('hidden');
 }
 
+function handleAddCityClick() {
+    welcomeScreenEl.classList.remove('hidden');
+    appContainerEl.classList.add('hidden');
+    cityInputEl.value = '';
+    suggestionsListEl.classList.add('hidden');
+}
+
 function handleRefresh() {
     if (currentViewedCity) {
         loadWeatherForCity(currentViewedCity);
+    }
+}
+
+function handleToggleView() {
+    isViewToggled = !isViewToggled;
+    localStorage.setItem('isViewToggled', JSON.stringify(isViewToggled));
+    toggleViewBtnEl.textContent = isViewToggled ? '🎨 Вернуть вид' : '🎨 Сменить вид';
+    applyViewToggle();
+}
+
+function applyViewToggle() {
+    if (isViewToggled) {
+        document.body.style.background = 'linear-gradient(135deg, #f8bbd0, #fce4ec)';
+        document.body.style.animation = 'pulse 3s infinite alternate';
+        document.body.style.color = '#333';
+        weatherCenterEl.classList.add('hidden');
+        allWeatherContainerEl.classList.remove('hidden');
+        renderAllCitiesWeather();
+    } else {
+       
+        if (currentWeatherData) {
+            const current = currentWeatherData.current_weather;
+            setWeatherBackground(current.weathercode);
+        }
+        weatherCenterEl.classList.remove('hidden');
+        allWeatherContainerEl.classList.add('hidden');
     }
 }
 
@@ -222,7 +288,7 @@ async function loadWeatherForCity(cityName) {
         }
 
         currentViewedCity = cityName;
-        renderCitiesList(); // Обновляем активную кнопку
+        renderCitiesList();
     } catch (err) {
         showError(err.message);
     } finally {
@@ -253,9 +319,10 @@ async function getCoordsByCity(cityName) {
     return {
         lat: parseFloat(data[0].lat),
         lon: parseFloat(data[0].lon),
-        name: data[0].display_name
+        name: cityName 
     };
 }
+
 
 const weatherCodes = {
     0: { desc: "Ясно", bg: "#fdf6b3ff" },
@@ -285,6 +352,8 @@ const weatherCodes = {
 };
 
 function setWeatherBackground(weatherCode) {
+    if (isViewToggled) return; 
+
     const codeInfo = weatherCodes[weatherCode] || { bg: "#ffffff" };
     let gradient = `linear-gradient(135deg, ${codeInfo.bg}, ${adjustColor(codeInfo.bg, 15)})`;
     document.body.style.background = gradient;
@@ -402,7 +471,7 @@ function renderForecast(data, cityName) {
     }
 
     if (forecastGridEl) {
-        forecastGridEl.innerHTML = daily.time.slice(0, 7).map((dateStr, i) => {
+        forecastGridEl.innerHTML = daily.time.slice(0, 6).map((dateStr, i) => {
             const date = new Date(dateStr);
             const weatherCode = daily.weathercode[i];
             const codeInfo = weatherCodes[weatherCode] || { desc: "Неизвестно" };
@@ -419,9 +488,57 @@ function renderForecast(data, cityName) {
         }).join('');
     }
 
-    setWeatherBackground(weatherCode);
+    if (!isViewToggled) setWeatherBackground(weatherCode);
 
     currentWeatherData = data;
+}
+
+async function renderAllCitiesWeather() {
+    allWeatherContainerEl.innerHTML = '';
+    const citiesToRender = [{ name: 'current' }].concat(userCities);
+
+    for (const city of citiesToRender) {
+        try {
+            let weatherData;
+            let cityName;
+
+            if (city.name === 'current') {
+                const loc = JSON.parse(localStorage.getItem('currentLocation'));
+                if (!loc) continue;
+                weatherData = await getWeatherByCoords(loc.lat, loc.lon);
+                cityName = "Текущее местоположение";
+            } else {
+                weatherData = await getWeatherByCity(city.name);
+                cityName = weatherData.cityName;
+            }
+
+            const current = weatherData.current_weather;
+            const daily = weatherData.daily;
+
+            const card = document.createElement('div');
+            card.className = 'all-weather-card';
+
+            card.innerHTML = `
+                <h3>${cityName}</h3>
+                <div class="temp">${Math.round(current.temperature)}°C</div>
+                <div class="desc">${weatherCodes[current.weathercode]?.desc || "Неизвестно"}</div>
+                <div class="time">${new Date(current.time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</div>
+                <div class="forecast-list">
+                    ${daily.time.slice(0, 6).map((dateStr, i) => {
+                        const date = new Date(dateStr);
+                        const codeInfo = weatherCodes[daily.weathercode[i]] || { desc: "Неизвестно" };
+                        const maxTemp = Math.round(daily.temperature_2m_max[i]);
+                        const minTemp = Math.round(daily.temperature_2m_min[i]);
+                        return `<div class="forecast-day">${date.toLocaleDateString('ru-RU', { weekday: 'short' }).slice(0, 2)} ↑${maxTemp}° ↓${minTemp}° ${codeInfo.desc}</div>`;
+                    }).join('')}
+                </div>
+            `;
+
+            allWeatherContainerEl.appendChild(card);
+        } catch (err) {
+            console.error("Ошибка при загрузке погоды для города", city.name, err);
+        }
+    }
 }
 
 function getCurrentPosition() {
