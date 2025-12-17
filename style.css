@@ -17,7 +17,7 @@ body {
     padding: 20px;
 }
 
-
+/* Приветственный экран */
 .welcome-screen {
     position: fixed;
     top: 0;
@@ -36,8 +36,8 @@ body {
 }
 
 .welcome-screen h1 {
-    font-family: 'Delius', cursive; 
-    font-size: 2.5rem; 
+    font-family: 'Delius', cursive;
+    font-size: 2.5rem;
     color: #333;
     margin-bottom: 10px;
 }
@@ -74,7 +74,6 @@ body {
     background: #d81b60;
 }
 
-
 #manual-city-form {
     display: flex;
     flex-direction: column;
@@ -101,7 +100,14 @@ body {
     box-shadow: 0 0 8px rgba(233, 30, 99, 0.5);
 }
 
-
+.error-message-input {
+    color: #d32f2f;
+    font-size: 0.9rem;
+    text-align: left;
+    width: 100%;
+    margin-top: -5px;
+    margin-bottom: 5px;
+}
 
 #manual-city-form button {
     background: #f37379;
@@ -117,12 +123,39 @@ body {
     background: #d81b60;
 }
 
+.suggestions {
+    position: absolute;
+    background: white;
+    border: 1px solid #ddd;
+    list-style: none;
+    z-index: 10;
+    width: calc(100% - 24px);
+    max-height: 150px;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    top: 100%;
+    left: 0;
+    font-family: 'Roboto', sans-serif;
+}
 
+.suggestions li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-size: 0.9rem;
+}
+
+.suggestions li:hover {
+    background: #ffe0e0;
+}
+
+/* Основной интерфейс */
 .app-container {
     width: 100%;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     position: relative;
     padding: 0;
@@ -139,7 +172,51 @@ body {
     overflow: hidden;
 }
 
+.cities-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+    justify-content: center;
+    width: 90%;
+    max-width: 500px;
+}
 
+.city-btn {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    font-family: 'Roboto', sans-serif;
+}
+
+.city-btn.active {
+    background: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+}
+
+.city-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.refresh-btn {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+}
 
 .weather-center {
     background: radial-gradient(circle at center, rgba(255, 255, 255, 0.95), transparent 70%);
@@ -157,7 +234,6 @@ body {
     align-items: center;
     justify-content: center;
     animation: float 6s ease-in-out infinite;
-   
 }
 
 @keyframes float {
@@ -167,7 +243,7 @@ body {
 }
 
 .weather-center h2 {
-    font-family: 'Delius', cursive; 
+    font-family: 'Delius', cursive;
     font-size: 2.2rem;
     color: #333;
     margin-bottom: 10px;
@@ -221,21 +297,21 @@ body {
     transition: transform 0.3s;
     font-size: 0.9rem;
     text-align: center;
-    color: #333; 
-    font-family: 'Roboto', sans-serif; 
+    color: #333;
+    font-family: 'Roboto', sans-serif;
 }
 
 .day-card .day-short {
     font-weight: bold;
     font-size: 0.9rem;
     margin-bottom: 5px;
-    color: #333; 
-    font-family: 'Roboto', serif; 
+    color: #333;
+    font-family: 'Roboto', serif;
 }
 
 .day-card .desc {
     font-size: 0.8rem;
-    color: #333; 
+    color: #333;
     margin: 5px 0;
     font-family: 'Roboto', sans-serif;
 }
@@ -243,7 +319,7 @@ body {
 .day-card .temp-range {
     font-size: 0.9rem;
     font-weight: bold;
-    color: #333; 
+    color: #333;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -269,18 +345,16 @@ body {
 }
 
 .change-city-btn::before {
-    content: "";
+    content: "🔄";
     font-size: 1rem;
     font-family: 'Lora', serif;
 }
-
 
 @keyframes gradientShift {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
-
 
 .loading {
     position: fixed;
@@ -290,7 +364,6 @@ body {
     background: rgba(255, 255, 255, 0.9);
     padding: 20px 30px;
     border-radius: 12px;
-    
     z-index: 1001;
     font-size: 1.2rem;
     color: #333;
@@ -306,7 +379,6 @@ body {
     color: #d32f2f;
     padding: 15px 25px;
     border-radius: 8px;
-   
     z-index: 1001;
     text-align: center;
     font-size: 1rem;
@@ -316,7 +388,6 @@ body {
 .hidden {
     display: none !important;
 }
-
 
 @media (max-width: 600px) {
     .welcome-screen {
